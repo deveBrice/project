@@ -1,52 +1,118 @@
 <?php
-  namespace AppBundle\Controller;
 
-  use AppBundle\Entity\Student;
-  use Symfony\Component\HttpFoundation\Request;
-  use Symfony\Component\HttpFoundation\Response;
-  use Symfony\Component\Routing\Annotation\Route;
-  use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-  use Symfony\Component\Form\Extension\Core\Type\FormType;
-  use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-  use Symfony\Component\Form\Extension\Core\Type\TextType;
+namespace AppBundle\Controller;
 
-  class StudentController extends Controller 
-  {
+use AppBundle\Entity\Student;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Request;
+
+
+/**
+ * Student controller.
+ *
+ * @Route("student")
+ */
+class StudentController extends Controller
+{
+    /**
+     * Lists all student entities.
+     *
+     * @Route("/", name="students_list")
+     * @Method("GET")
+     */
+    public function indexAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $students = $em->getRepository('AppBundle:Student')->findAll();
+
+        return $this->render('AppBundle:Student:index.html.twig', array(
+            'students' => $students,
+        ));
+    }
 
     /**
-     * @Route("/student/add", name="student")
+     * 
+     *
+     * @Route("/new", name="students_add")
+     * @Method({"GET", "POST"})
      */
     public function addAction(Request $request)
     {
         $student = new Student();
-        $student->setFirstName('');
-        $student->setLastName('');
-        $student->setNumEtud('');
-        
-        $formBuilder = $this->createFormBuilder($student);
+        $form = $this->createForm('AppBundle\Form\StudentType', $student);
+        $form->handleRequest($request);
 
-        $formBuilder
-          ->add('FirstName',      TextType::class)
-          ->add('LastName',       TextType::class)
-          ->add('NumEtud',        TextType::class)
-          ->add('Save',           SubmitType::class)
-          ->getForm();
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($student);
+            $em->flush();
 
-          $form = $formBuilder->getForm();
-          return $this->render('AppBundle:Student:add.html.twig', array(
-          
-         'form' => $form->createView(),
-      ));
+            return $this->redirectToRoute('students_list', array('id' => $student->getId()));
+        }
+
+        return $this->render('AppBundle:Student:add.html.twig', array(
+            'student' => $student,
+            'form' => $form->createView(),
+        ));
     }
 
     /**
-     * @Route("/hello-world", name="hello-world")
+     * 
+     *
+     * @Route("/{id}/edit", name="students_update")
+     * @Method({"GET", "POST"})
      */
-    public function indexAction()
+    public function updateAction(Request $request, Student $student)
     {
-      $content = $this->get('templating')->render('AppBundle:Student:index.html.twig');
-    
-      return new Response($content);
+        $deleteForm = $this->createDeleteForm($student);
+        $editForm = $this->createForm('AppBundle\Form\StudentType', $student);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isSubmitted() && $editForm->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('students_list', array('id' => $student->getId()));
+        }
+
+        return $this->render('AppBundle:Student:update.html.twig', array(
+            'student' => $student,
+            'edit_form' => $editForm->createView(),
+            'delete_form' => $deleteForm->createView(),
+        ));
     }
-  }
-?>
+
+    /**
+     * Deletes a student entity.
+     *
+     * @Route("/delete/{id}", name="students_delete")
+     * 
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $post = $em->getRepository('AppBundle:Student')->find($id);
+
+        if (!$post) {
+            return $this->redirectToRoute('list');
+        }
+
+        $em->remove($post);
+        $em->flush();
+
+        return $this->redirectToRoute('students_list');
+    }
+
+    
+    private function createDeleteForm(Student $student)
+    {
+        return $this->createFormBuilder()
+            ->setAction($this->generateUrl('students_delete', array('id' => $student->getId())))
+            ->setMethod('DELETE')
+            ->getForm()
+        ;
+    }
+}

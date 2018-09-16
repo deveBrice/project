@@ -1,16 +1,37 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Bienvenue sur ma première page avec OpenClassrooms !</title>
-  </head>
-  <body>
-    <h1>Hello World !</h1>
+{% extends 'base.html.twig' %}
 
-    <p>
-      Le Hello World est un grand classique en programmation.
-      Il signifie énormément, car cela veut dire que vous avez
-      réussi à exécuter le programme pour accomplir une tâche simple :
-      afficher ce hello world !
-    </p>
-  </body>
-</html>
+{% block body %}
+<link rel="stylesheet" href="{{ asset('bundles/app/bootstrap/bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/css/bootstrap.min.css') }}" />
+<script src="{{ asset('bundles/app/bootstrap/bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/jquery.min.js') }}"></script>
+<script src="{{ asset('bundles/app/bootstrap/bootstrap-3.3.7-dist/bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
+    <h1>Liste des Etudiants</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Prenom</th>
+                <th>Nom</th>
+                <th>Numéro d'étudiant</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for student in students %}
+            <tr>
+                <td>{{ student.firstName }}</td>
+                <td>{{ student.lastName }}</td>
+                <td>{{ student.numEtud }}</td>
+                <td><a href="{{ path('students_update', { 'id': student.id }) }}">Modifier</a></td>
+                <td><a href="{{ path('students_delete', { 'id': student.id }) }}">Supprimer</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('students_add') }}">Ajouter un etudiant(e)</a>
+        </li>
+    </ul>
+{% endblock %}

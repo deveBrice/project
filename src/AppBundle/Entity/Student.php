@@ -1,62 +1,93 @@
-<?php 
+<?php
 
 namespace AppBundle\Entity;
 
-class Student 
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Student
+ *
+ * @ORM\Table(name="student")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\StudentRepository")
+ */
+class Student
 {
-    
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
     private $id;
-    private $FirstName;
-    private $LastName;
-    private $NumEtud;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="FirstName", type="string", length=25)
+     */
+    private $firstName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="LastName", type="string", length=25)
+     */
+    private $lastName;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="NumEtud", type="integer")
+     */
+    private $numEtud;
 
 
-    public function __construct() 
-   {
-     /* $this->firstName = new
-      $this->lastName = new
-      $this->numEtud = new*/
-   }
-
-    public function setId($id) 
+   
+    public function getId()
     {
-       $this->id = $id;
+        return $this->id;
     }
 
-    public function getId($id) 
+
+    public function setFirstName($firstName)
     {
-       return $this->id = $id;
+        $this->firstName = $firstName;
+
+        return $this;
     }
 
-    public function setFirstName($firstName) 
+
+    public function getFirstName()
     {
-       $this->firstName = $firstName;
+        return $this->firstName;
     }
 
-    public function getFirstName() 
+  
+    public function setLastName($lastName)
     {
-      return $this->firstName;
+        $this->lastName = $lastName;
+
+        return $this;
     }
 
-    public function setLastName($lastName) 
+    public function getLastName()
     {
-       $this->lastName = $lastName;
+        return $this->lastName;
     }
 
-    public function getLastName() 
+  
+    public function setNumEtud($numEtud)
     {
-       return $this->lastName;
+        $this->numEtud = $numEtud;
+
+        return $this;
     }
 
-    public function setNumEtud($numEtud) 
+  
+    public function getNumEtud()
     {
-       $this->numEtud = $numEtud;
+        return $this->numEtud;
     }
-
-    public function getNumEtud() 
-    {
-       return $this->numEtud;
-    }
-
 }
-?>
+
