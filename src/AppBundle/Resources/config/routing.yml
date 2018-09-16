@@ -1,0 +1,7 @@
+student_add:
+    path:       /student/add
+    defaults: { _controller: AppBundle:Student:add }
+
+hello_the_world:
+    path:     /hello-world
+    defaults: { _controller: AppBundle:Student:index }
