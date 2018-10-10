@@ -42,7 +42,11 @@ class Student
      */
     private $numEtud;
 
-
+    /**
+     * @ORM\ManyToOne(targetEntity="Department", inversedBy="student")
+     *  @ORM\JoinColumn(name="department_id", referencedColumnName="id")
+     */
+    private $department;
    
     public function getId()
     {
@@ -88,6 +92,34 @@ class Student
     public function getNumEtud()
     {
         return $this->numEtud;
+    }
+
+    /**
+     * Set Department
+     * 
+     * @param \AppBundle\Entity\Department $department
+     * 
+     * @return Student
+     */
+
+     public function setDepartment(\AppBundle\Entity\Department $department = null)
+     {
+         $this->department = $department;
+
+         return $this;
+     }
+
+    /**
+     * Get Department
+     * 
+     * 
+     * @return \AppBundle\Entity\Department
+     */
+
+    public function getDepartment()
+    {
+
+        return $this->department;
     }
 }
 

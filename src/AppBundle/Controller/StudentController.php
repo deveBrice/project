@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Student;
+use AppBundle\Entity\Department;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -44,10 +45,14 @@ class StudentController extends Controller
         $student = new Student();
         $form = $this->createForm('AppBundle\Form\StudentType', $student);
         $form->handleRequest($request);
+         var_dump($student);
+        // $department = new Department();
+       
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($student);
+           // $em->persist($department);
             $em->flush();
 
             return $this->redirectToRoute('students_list', array('id' => $student->getId()));
@@ -114,5 +119,29 @@ class StudentController extends Controller
             ->setMethod('DELETE')
             ->getForm()
         ;
+    }
+    
+
+    /**
+     * 
+     * @Route("/add")
+     */
+    public function addStudent()
+    {
+        $department = new Department();
+        $department->setName("test");
+        $department->setCapacity("1");
+
+        $student = new Student();
+        $student->setfirstName("Raizaki");
+        $student->setlastName("Akazuki");
+        $student->setnumEtud("2");
+        $student->setDepartment($department);
+
+        $doc = $this->getDoctrine()->getManager();
+        $doc->persist($department);
+        $doc->persist($student);
+        $doc->flush();
+
     }
 }
